@@ -1,4 +1,4 @@
-import { EnemyData } from "./enemy-data";
+import { adjDiag, EnemyData } from "./enemy-data";
 import { GameConfig } from "./game-config";
 import { soundData, soundDataMap } from "./sound/sound";
 import { soundService } from "./sound/sound-service";
@@ -28,7 +28,9 @@ export class Game {
   isPlaying = true;
   victory = false;
 
-  hp = 3;
+  maxHp = 5;
+  hp = this.maxHp;
+  hearts = new Array(this.hp).fill(true);
   score = 0;
 
   killerPos: [number, number] | null = null;
@@ -81,8 +83,7 @@ export class Game {
     this.board.forEach(row => {
       row.forEach(cell => {
         cell.sounds.sort((a, b) => a.delayMs - b.delayMs);
-        // cell.sounds.forEach((sound, index) => cell.sounds[index].delayMs = index * 200);
-        // cell.sounds.forEach((sound, index) => cell.sounds[index].delayMs = index * 200);
+        cell.sounds.forEach((sound, index) => cell.sounds[index].delayMs = index * 250);
       });
     });
 
@@ -92,19 +93,46 @@ export class Game {
       flagged: 0,
       countTotal: count,
     }));
+
+    // randomly reveal 1 silent tile
+    for (let attempt = 0; attempt < 1000; attempt++) {
+      const i = Math.floor(Math.random() * cfg.height);
+      const j = Math.floor(Math.random() * cfg.width);
+      const cell = this.board[i][j];
+      if (!cell.enemyData && !cell.sounds.length && !cell.revealed) {
+        this.tileClick(i, j);
+        break;
+      }
+    }
   }
 
   tileClick(i: number, j: number) {
     if (!this.isPlaying) { return; }
 
-    if (this.board[i][j].revealed) {
+    const tile = this.board[i][j];
+    if (tile.revealed) {
       this.playTileAdjSounds(i, j);
-    } else if (this.board[i][j].flag) {
+    } else if (tile.flag) {
       // do nothing
-    } else if (this.board[i][j].enemyData) {
-      this.revealAllEnemies();
-      this.killerPos = [i, j];
-      this.isPlaying = false;
+    } else if (tile.enemyData) {
+      // hit enemy
+      soundService.play(soundData.damage);
+      this.changeHp(-tile.enemyData.damage);
+
+      // remove flag
+      if (tile.flag) {
+        this.palette.find(pe => pe.enemyData === tile.flag)!.flagged--;
+      }
+      // add flag
+      this.palette.find(pe => pe.enemyData === tile.enemyData)!.flagged++;
+      
+      if (this.hp <= 0) {
+        this.revealAllEnemies();
+        this.killerPos = [i, j];
+        this.isPlaying = false;
+      } else {
+        tile.revealed = true;
+      }
     } else {
       this.board[i][j].revealed = true;
       this.playTileAdjSounds(i, j);
@@ -112,6 +140,7 @@ export class Game {
       // check victory
       const allRevealed = this.board.every(row => row.every(cell => cell.revealed || cell.enemyData));
       if (allRevealed) {
+        soundService.play(soundData.win);
         this.isPlaying = false;
         this.victory = true;
         this.revealAllEnemies();
@@ -141,6 +170,11 @@ export class Game {
     }
   }
 
+  changeHp(delta: number) {
+    this.hp += delta;
+    this.hearts = new Array(this.maxHp).fill(true).map((_, index) => index < this.hp);
+  }
+
   private revealAllEnemies() {
     this.board.forEach(row => {
       row.forEach(cell => {
@@ -163,6 +197,51 @@ export class Game {
 
     if (sounds.length === 0) {
       soundService.play(soundData.cricket);
+      this.revealDueToSilence(i, j);
     }
   }
+
+  playPaletteSound(enemyData: EnemyData) {
+    const sounds = [...new Set(enemyData.soundMatrix.flatMap(row => row.flatMap(keys => keys)))];
+    shuffleArray(sounds);
+
+    sounds.forEach((key, index) => {
+      setTimeout(() => {
+        soundService.play(soundDataMap[key]);
+      }, index * 250);
+    });
+  }
+
+  private revealDueToSilence(i: number, j: number) {
+    const checked: Set<string> = new Set();
+    const toCheck: [number, number][] = [[i, j]];
+    while (toCheck.length > 0) {
+      const [ci, cj] = toCheck.pop()!;
+      const key = `${ci},${cj}`;
+      if (!checked.has(key)) {
+        checked.add(key);
+        const cell = this.board[ci][cj];
+        if (cell.sounds.length === 0) {
+          cell.revealed = true;
+          adjDiag.forEach(([di, dj]) => {
+            const ni = ci + di;
+            const nj = cj + dj;
+            const isInside = ni >= 0 && ni < this.cfg.height && nj >= 0 && nj < this.cfg.width;
+            if (isInside && !this.board[ni][nj].revealed) {
+              this.board[ni][nj].revealed = true;
+              toCheck.push([ni, nj]);
+            }
+          });
+        }
+      }
+    }
+  }
+}
+
+function shuffleArray<T>(array: T[]): T[] {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }

@@ -30,8 +30,9 @@
   &.revealed {
     background: #181818;
     &.reveal-wrong-flag { background: #100; }
+    &.reveal-correct-flag { background: #040; }
     &.reveal-killer {
-      background: #211;
+      background: #511;
       img {
         filter: drop-shadow(0 0 3px red);
       }

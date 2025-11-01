@@ -15,19 +15,29 @@ export class GameComponent {
   selectedEnemyData: EnemyData | null = null;
 
   onNewGameClick() {
+    const score = this.game.victory ? this.game.score : 0;
     this.game = new Game(this.cfg);
+    this.game.score = score;
   }
 
-  onCellClick(i: number, j: number) {
-    this.game.tileClick(i, j);
+  onCellClick(event: Event, i: number, j: number) {
+    if (event instanceof MouseEvent) {
+      if (event.button === 0) {
+        this.game.tileClick(i, j);
+      } else if (event.button === 2) {
+        this.game.tileRightClick(i, j, this.selectedEnemyData);
+      }
+    }
   }
 
-  onCellRightClick(event: MouseEvent, i: number, j: number) {
+  onContextMenu(event: Event) {
     event.preventDefault();
-    this.game.tileRightClick(i, j, this.selectedEnemyData);
+    event.stopPropagation();
+    return false;
   }
 
   onPaletteClick(enemyData: EnemyData) {
     this.selectedEnemyData = enemyData;
+    this.game.playPaletteSound(enemyData);
   }
 }

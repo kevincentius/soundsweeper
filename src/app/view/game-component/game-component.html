@@ -10,6 +10,13 @@
         </h2>
       </div>
 
+      <div style="display: flex; gap: 4px;">
+        @for (heart of game.hearts; track heart; let idx = $index) {
+          @if (idx < game.hp) { <img src="img/heart.png" height="36"/> }
+          @if (idx >= game.hp) { <img src="img/heart-empty.png" height="36"/> }
+        }
+      </div>
+
       <div class="btn" (click)="onNewGameClick()">
         New Game
       </div>
@@ -20,12 +27,17 @@
         @for (entry of game.palette; track entry; let idx = $index) {
           <div class="h-box palette-entry"
             [class.selected]="entry.enemyData === selectedEnemyData"
-            (click)="onPaletteClick(entry.enemyData)"
+            (mousedown)="onPaletteClick(entry.enemyData)"
+            (contextmenu)="onContextMenu($event);"
           >
             <img [src]="'img/' + entry.enemyData.img" [height]="cfg.tileSize" />
             <div style="width: 20px;"></div>
-            <div style="font-size: 24px">
-              {{entry.flagged}}<span style="opacity: 0.5"> of {{entry.countTotal}}</span>
+            <div class="v-box">
+              <div style="font-size: 24px">
+                {{entry.flagged}}<span style="opacity: 0.5"> of {{entry.countTotal}}</span>
+              </div>
+
+              <div style="font-size: 75%; opacity: 0.5">({{entry.enemyData.damage}} damage)</div>
             </div>
           </div>
         }
@@ -42,9 +54,10 @@
                 [style.height.px]="cfg.tileSize"
                 [class.revealed]="cell.revealed"
                 [class.reveal-wrong-flag]="cell.revealed && !!cell.flag && cell.flag != cell.enemyData"
+                [class.reveal-correct-flag]="cell.revealed && !!cell.flag && cell.flag == cell.enemyData"
                 [class.reveal-killer]="game.killerPos && game.killerPos[0] == i && game.killerPos[1] == j"
-                (click)="onCellClick(i, j)"
-                (contextmenu)="onCellRightClick($event, i, j)"
+                (mousedown)="onCellClick($event, i, j)"
+                (contextmenu)="onContextMenu($event);"
               >
                 @if (cell.revealed && cell.enemyData) {
                   <img [src]="'img/' + cell.enemyData.img" [height]="cfg.tileSize" [class.flipped]="cell.flipped" />

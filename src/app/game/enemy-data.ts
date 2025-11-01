@@ -1,8 +1,8 @@
 import { soundData } from "./sound/sound";
 
-const adjDiag = [
+export const adjDiag = [
   [-1, -1], [-1, 0], [-1, 1],
-  [ 0, -1],          [ 0, 1],
+  [ 0, -1], [ 0, 0], [ 0, 1],
   [ 1, -1], [ 1, 0], [ 1, 1],
 ];
 

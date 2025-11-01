@@ -1,0 +1,40 @@
+
+.game-board {
+  // border-right: 2px solid #202020;
+  // border-bottom: 2px solid #202020;
+}
+
+.game-row {
+  display: flex;
+}
+
+.game-cell {
+  cursor: pointer;
+  background: #080808;
+  // border-left: 2px solid #202020;
+  // border-top: 2px solid #202020;
+  
+  border-style: solid;
+  border-width: 6px;
+  border-top-color: #333;
+  border-left-color: #333;
+  border-right-color: #000;
+  border-bottom-color: #000;
+  
+  &:hover {
+    background: #222;
+  }
+
+  &.revealed {
+    background: #181818;
+    border-top-color: #111;
+    border-left-color: #111;
+    border-right-color: #444;
+    border-bottom-color: #444;
+    cursor: default;
+  }
+}
+
+.flipped {
+  transform: rotateY(180deg);
+}

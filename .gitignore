@@ -1,5 +1,8 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+# temporarily ignored due to license attribution requirement
+/public
+
 # Compiled output
 /dist
 /tmp

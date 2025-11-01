@@ -1,0 +1,20 @@
+<div class="full-size centerizer">
+  <div class="game-board">
+    @for (row of game.board; track row; let i = $index) {
+      <div class="game-row">
+        @for (cell of row; track cell; let j = $index) {
+          <div class="game-cell revealed"
+            [style.width.px]="cfg.tileSize"
+            [style.height.px]="cfg.tileSize"
+            (click)="onCellClick(i, j)"
+          >
+            @if (cell.enemyData) {
+              <img [src]="'img/' + cell.enemyData.img" [height]="cfg.tileSize" [class.flipped]="cell.flipped" />
+            }
+            &nbsp;
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

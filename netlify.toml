@@ -2,3 +2,10 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build]
+  # Existing settings like 'command' might be here
+  command = "ng build"
+  # This is the line you need to set correctly
+  publish = "dist/soundsweeper/browser"
+  

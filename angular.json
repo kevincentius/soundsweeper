@@ -24,7 +24,7 @@
               {
                 "glob": "**/*",
                 "input": "public",
-                "output": "snd"
+                "output": "/"
               }
             ],
             "styles": [

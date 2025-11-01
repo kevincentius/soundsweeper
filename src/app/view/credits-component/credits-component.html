@@ -1,0 +1,54 @@
+
+<h2>Acknowledgements</h2>
+
+<div style="height: 20px"></div>
+
+<h3>Enemy sprites by <a href="https://itch.io/search?q=deepdivegamestudio">DeepDiveGameStudio</a></h3>  
+
+<img src="img/VampireBat.gif" width="60" height="60" />
+
+<hr>
+
+<div style="height: 50px"></div>
+
+<h3>Sound effects were taken from <a href="https://freesound.org/">freesound.org</a></h3>
+
+Click name to hear sound
+
+<table>
+  <tr>
+    <th>Sound</th>
+    <th>Source</th>
+  </tr>
+  
+  <tr *ngFor="let soundData of soundDataList">
+    <td (click)="soundService.play(soundData)">
+      {{soundData.key}}
+    </td>
+    <td>
+      <a [href]="soundData.creditsUrl">{{soundData.creditsUrl}}</a>
+    </td>
+  </tr>
+</table>
+
+<hr>
+
+<div style="height: 50px"></div>
+
+<h3>Background images</h3>
+
+<table>
+  <tr>
+    <th>Image</th>
+    <th>Source</th>
+  </tr>
+  
+  <!-- <tr *ngFor="let bgData of bgDataList">
+    <td>
+      {{bgData.name}}
+    </td>
+    <td>
+      <a [href]="bgData.creditsUrl">{{bgData.creditsUrl}}</a>
+    </td>
+  </tr> -->
+</table>

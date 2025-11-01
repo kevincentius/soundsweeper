@@ -1,7 +1,41 @@
-@if (loaded()) {
-  <app-game-component></app-game-component>
-}
+<!-- <div class="full-size" (click)="onStartClick()">
+  @if (loaded()) {
+    @if (gameStarted()) {
+      <app-game-component></app-game-component>
+    }
+    
+    @if (!gameStarted()) {
+      <div>Click anywhere to start!</div>
+    }
+  }
 
-@if (!loaded()) {
-  LOADING...
-}
+  @if (!loaded()) {
+    <h2>Loading...</h2>
+  }
+
+  <div style="height: 50px;"></div>
+
+  <app-credits-component style="opacity: 0.2"></app-credits-component>
+</div> -->
+
+<div class="main-container full-size v-box">
+  <div style="flex-grow: 1">
+    @if (creditsVisible()) {
+      <app-credits-component></app-credits-component>
+    }
+
+    @if (!creditsVisible()) {
+      @if (loaded()) {
+          <app-game-component></app-game-component>
+      }
+
+      @if (!loaded()) {
+        <h2>Loading...</h2>
+      }
+    }
+  </div>
+
+  <div class="h-box" style="justify-content: flex-end;">
+    <div (click)="onCreditsClick()" style="cursor: pointer">Credits</div>
+  </div>
+</div>

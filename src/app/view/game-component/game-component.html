@@ -1,20 +1,64 @@
 <div class="full-size centerizer">
-  <div class="game-board">
-    @for (row of game.board; track row; let i = $index) {
-      <div class="game-row">
-        @for (cell of row; track cell; let j = $index) {
-          <div class="game-cell revealed"
-            [style.width.px]="cfg.tileSize"
-            [style.height.px]="cfg.tileSize"
-            (click)="onCellClick(i, j)"
+  <div class="v-box">
+    <div class="h-box" style="justify-items: flex-end; align-items: center;">
+      <div style="flex-grow: 1">
+        <h2>
+          <span>Score: {{game.score}}</span>
+          @if(game.killerPos) {
+            <span> (dead)</span>
+          }
+        </h2>
+      </div>
+
+      <div class="btn" (click)="onNewGameClick()">
+        New Game
+      </div>
+    </div>
+
+    <div class="h-box">
+      <div class="game-palette v-box">
+        @for (entry of game.palette; track entry; let idx = $index) {
+          <div class="h-box palette-entry"
+            [class.selected]="entry.enemyData === selectedEnemyData"
+            (click)="onPaletteClick(entry.enemyData)"
           >
-            @if (cell.enemyData) {
-              <img [src]="'img/' + cell.enemyData.img" [height]="cfg.tileSize" [class.flipped]="cell.flipped" />
-            }
-            &nbsp;
+            <img [src]="'img/' + entry.enemyData.img" [height]="cfg.tileSize" />
+            <div style="width: 20px;"></div>
+            <div style="font-size: 24px">
+              {{entry.flagged}}<span style="opacity: 0.5"> of {{entry.countTotal}}</span>
+            </div>
           </div>
         }
       </div>
-    }
+
+      <div style="width: 100px;"></div>
+
+      <div class="game-board">
+        @for (row of game.board; track row; let i = $index) {
+          <div class="game-row">
+            @for (cell of row; track cell; let j = $index) {
+              <div class="game-cell"
+                [style.width.px]="cfg.tileSize"
+                [style.height.px]="cfg.tileSize"
+                [class.revealed]="cell.revealed"
+                [class.reveal-wrong-flag]="cell.revealed && !!cell.flag && cell.flag != cell.enemyData"
+                [class.reveal-killer]="game.killerPos && game.killerPos[0] == i && game.killerPos[1] == j"
+                (click)="onCellClick(i, j)"
+                (contextmenu)="onCellRightClick($event, i, j)"
+              >
+                @if (cell.revealed && cell.enemyData) {
+                  <img [src]="'img/' + cell.enemyData.img" [height]="cfg.tileSize" [class.flipped]="cell.flipped" />
+                }
+
+                @if (!cell.revealed && cell.flag) {
+                  <img [src]="'img/' + cell.flag.img" [height]="cfg.tileSize" class="enemy-flag" />
+                }
+                &nbsp;
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
   </div>
 </div>

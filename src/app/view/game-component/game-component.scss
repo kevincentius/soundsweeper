@@ -9,6 +9,8 @@
 }
 
 .game-cell {
+  transition: 200ms;
+
   cursor: pointer;
   background: #080808;
   // border-left: 2px solid #202020;
@@ -27,6 +29,13 @@
 
   &.revealed {
     background: #181818;
+    &.reveal-wrong-flag { background: #100; }
+    &.reveal-killer {
+      background: #211;
+      img {
+        filter: drop-shadow(0 0 3px red);
+      }
+    }
     border-top-color: #111;
     border-left-color: #111;
     border-right-color: #444;
@@ -37,4 +46,28 @@
 
 .flipped {
   transform: rotateY(180deg);
+}
+
+.game-palette {
+  height: 100%;
+  justify-content: center;
+  gap: 20px;
+
+  img {
+    opacity: 0.3;
+  }
+}
+
+.palette-entry {
+  align-items: center;
+  &.selected {
+    filter: brightness(1.2) contrast(1.2);
+    img {
+      opacity: 1;
+    }
+  }
+}
+
+.enemy-flag {
+  opacity: 0.2;
 }

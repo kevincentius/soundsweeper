@@ -23,7 +23,6 @@ class SoundService {
 
   play(soundData: SoundData) {
     let entry = this.map.get(soundData.key)!;
-    entry.stop();
     entry.play();
   }
 

@@ -14,16 +14,28 @@
   width: 100%;
 }
 
-:host {
-  background: blue;
+.h-box {
+  display: flex;
+  flex-direction: row;
 }
+
+.v-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.grow-box {
+  flex-grow: 1;
+}
+
+a { color: yellow; }
 
 html, body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
   background: black;
-  color: white;
+  color: #fff8;
   text-shadow: black 1px 1px 2px;
   width: 100%;
   height: 100%;
@@ -39,4 +51,17 @@ img {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+  filter: drop-shadow(0 0 8px black);
+}
+
+.btn {
+  cursor: pointer;
+  padding: 20px 40px;
+
+  &:hover {
+    transition: 200ms;
+    filter: brightness(1.2);
+    transform: scale(1.15);
+    color: white;
+  }
 }

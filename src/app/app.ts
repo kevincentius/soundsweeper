@@ -1,11 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { GameComponent } from "./view/game-component/game-component";
 import { soundService } from './game/sound/sound-service';
+import { CreditsComponent } from "./view/credits-component/credits-component";
 
 @Component({
   selector: 'app-root',
-  imports: [GameComponent],
+  imports: [GameComponent, CreditsComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -13,6 +13,8 @@ export class App {
   protected readonly title = signal('soundsweeper');
 
   loaded = signal(false);
+  gameStarted = signal(false);
+  creditsVisible = signal(false);
   
   constructor() {
     soundService.loadingCounter.progress.subscribe(progress => {
@@ -22,5 +24,15 @@ export class App {
         });
       }
     });
+  }
+
+  onStartClick() {
+    this.gameStarted.set(true);
+    this.creditsVisible.set(false);
+  }
+  
+  onCreditsClick() {
+    this.creditsVisible.set(!this.creditsVisible());
+    this.gameStarted.set(!this.creditsVisible());
   }
 }
